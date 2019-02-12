@@ -1,0 +1,14 @@
+-- select * from film_actor; 
+-- insert into film_category(film_id,category_id)
+-- values(1001,7),(1001,11);
+-- 
+-- select * from film_category;
+-- 
+-- select title as Titulo, release_year as Año;
+-- from film;
+-- 
+-- select film_id as FID, title as Titulo, release_year `Año de creación`, rental_rate
+-- where film_id<500
+-- 
+-- or rental_rate<1
+-- and language_id=4;
