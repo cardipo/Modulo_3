@@ -102,14 +102,25 @@ class Nave {
     this.nombre = nombre;
     this.listaNaves = listaNaves;
   }
-  CrearInforme() {}
+  CrearInforme() {
+    let activas = this.listaNaves.filter(item => item.Estado == "activo");
+    let destruidas = this.listaNaves.filter(item => item.Estado == "destruido");
+    console.log(
+      "Las unidades activas del",
+      this.nombre,
+      "son",
+      activas.length,
+      "y las destruidas",
+      destruidas.length
+    );
+  }
   get Derrotado() {
     let isDerrotado = true;
     for (let value of this.listaNaves) {
       if (value.Estado == "activo") isDerrotado = false;
     }
-    if (isDerrotado) return "derrotado";
-    else return "en combate";
+    if (isDerrotado) return true;
+    else return false;
   }
  }
  
@@ -134,6 +145,12 @@ class Nave {
   distribuirEjercito(campoBatalla, ejercito) {
     campoBatalla.estableceEjercitos(ejercito);
   }
+  crearCampo(ejercito1, ejercito2) {
+    let nuevoCampo = new CampoBatalla();
+    this.distribuirEjercito(nuevoCampo, ejercito1);
+    this.distribuirEjercito(nuevoCampo, ejercito2);
+    return nuevoCampo;
+  }
  }
  
  class CampoBatalla {
@@ -147,13 +164,42 @@ class Nave {
   }
  
   seleccionarObjetivo(posicion) {
- 
+    for (let value of this.sectores[posicion]) {
+      if (value.Estado == "activo") {
+        return value;
+      }
+    }
+  }
+  seleccionarAtacante(posicion) {
+    for (let value of this.sectores[posicion]) {
+      if (value.Estado == "activo") {
+        return value;
+      }
+    }
   }
  
-  disparar() {
- 
+  disparar(posicion_ataca, posicion_defiende) {
+    let objetivo = this.seleccionarObjetivo(posicion_defiende);
+    let atacante = this.seleccionarAtacante(posicion_ataca);
+    objetivo.RecibirDisparo(atacante.dano);
   }
  
+  realizaPartida() {
+    while (true) {
+      this.disparar(0, 1);
+      this.ejercitos[1].CrearInforme();
+      if (this.ejercitos[1].Derrotado) {
+        console.log(this.ejercitos[0].nombre, "ha ganado");
+        break;
+      }
+      this.disparar(1, 0);
+      this.ejercitos[0].CrearInforme();
+      if (this.ejercitos[0].Derrotado) {
+        console.log(this.ejercitos[1].nombre, "ha ganado");
+        break;
+      }
+    }
+  }
  }
  
  class Sector {
@@ -169,3 +215,6 @@ class Nave {
  let ejercito2 = generador.crearEjercito("rojo", 4, 2, 5);
  console.log(ejercito1);
  console.log(ejercito2);
+ let campo_batalla = generador.crearCampo(ejercito1, ejercito2);
+ campo_batalla.realizaPartida();
+ 
